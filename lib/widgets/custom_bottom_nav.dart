@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/chat_list_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/share_meal_screen.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -29,7 +30,10 @@ class CustomBottomNav extends StatelessWidget {
             // Map screen - placeholder
             break;
           case 2:
-            // Add screen - placeholder
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ShareMealScreen()),
+            );
             break;
           case 3:
             Navigator.pushReplacement(

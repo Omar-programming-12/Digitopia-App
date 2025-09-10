@@ -1,8 +1,40 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_nav.dart';
+import 'package:digitopia_app/screens/individual_chat_screen.dart';
+import 'package:digitopia_app/widgets/custom_bottom_nav.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
+
+  final List<Map<String, dynamic>> _chats = const [
+    {
+      'name': 'جود أحمد',
+      'message': 'مرحبا كيف حالك اليوم؟',
+      'time': '2 د',
+      'avatar': 'https://via.placeholder.com/40',
+      'hasUnread': true,
+    },
+    {
+      'name': 'نور محمد',
+      'message': 'شكرا لك على الوجبة الرائعة',
+      'time': '5 د',
+      'avatar': 'https://via.placeholder.com/40',
+      'hasUnread': false,
+    },
+    {
+      'name': 'سارة الخضير',
+      'message': 'هل يمكنني طلب نفس الوجبة؟',
+      'time': '15 د',
+      'avatar': 'https://via.placeholder.com/40',
+      'hasUnread': true,
+    },
+    {
+      'name': 'فريد الأحمري',
+      'message': 'متى ستكون الوجبة جاهزة؟',
+      'time': '30 د',
+      'avatar': 'https://via.placeholder.com/40',
+      'hasUnread': false,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,56 +87,21 @@ class ChatListScreen extends StatelessWidget {
               ],
             ),
           ),
-          
           Expanded(
-            child: ListView(
+            child: ListView.builder(
               padding: const EdgeInsets.all(16),
-              children: [
-                _buildChatItem(
-                  'جود أحمد',
-                  'مرحبا كيف حالك اليوم؟',
-                  '2 د',
-                  'https://via.placeholder.com/40',
-                  hasUnread: true,
-                ),
-                _buildChatItem(
-                  'نور محمد',
-                  'شكرا لك على الوجبة الرائعة',
-                  '5 د',
-                  'https://via.placeholder.com/40',
-                ),
-                _buildChatItem(
-                  'سارة الخضير',
-                  'هل يمكنني طلب نفس الوجبة؟',
-                  '15 د',
-                  'https://via.placeholder.com/40',
-                  hasUnread: true,
-                ),
-                _buildChatItem(
-                  'فريد الأحمري',
-                  'متى ستكون الوجبة جاهزة؟',
-                  '30 د',
-                  'https://via.placeholder.com/40',
-                ),
-                _buildChatItem(
-                  'أحمد العريفي',
-                  'الطعام كان لذيذ جداً، شكراً لك',
-                  '1 س',
-                  'https://via.placeholder.com/40',
-                ),
-                _buildChatItem(
-                  'نور الهزاني',
-                  'هل تتوفر وجبات نباتية؟',
-                  '2 س',
-                  'https://via.placeholder.com/40',
-                ),
-                _buildChatItem(
-                  'محمد الشمري',
-                  'أريد أن أشارك وجبة معك',
-                  '3 س',
-                  'https://via.placeholder.com/40',
-                ),
-              ],
+              itemCount: _chats.length,
+              itemBuilder: (context, index) {
+                final chat = _chats[index];
+                return _buildChatItem(
+                  context,
+                  chat['name'],
+                  chat['message'],
+                  chat['time'],
+                  chat['avatar'],
+                  hasUnread: chat['hasUnread'],
+                );
+              },
             ),
           ),
         ],
@@ -113,90 +110,103 @@ class ChatListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChatItem(String name, String message, String time, String avatar, {bool hasUnread = false}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: NetworkImage(avatar),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      time,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (hasUnread)
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                      )
-                    else
-                      const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        message,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+  Widget _buildChatItem(BuildContext context, String name, String message, String time, String avatar, {bool hasUnread = false}) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IndividualChatScreen(
+              userName: name,
+              userAvatar: NetworkImage(avatar),
             ),
           ),
-          const SizedBox(width: 8),
-          Icon(
-            Icons.more_vert,
-            color: Colors.grey[400],
-            size: 20,
-          ),
-        ],
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(avatar),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        time,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (hasUnread)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          message,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.more_vert,
+              color: Colors.grey[400],
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
