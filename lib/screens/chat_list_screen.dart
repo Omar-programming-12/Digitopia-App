@@ -1,40 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:digitopia_app/screens/individual_chat_screen.dart';
-import 'package:digitopia_app/widgets/custom_bottom_nav.dart';
+import 'individual_chat_screen.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
 
-  final List<Map<String, dynamic>> _chats = const [
-    {
-      'name': 'جود أحمد',
-      'message': 'مرحبا كيف حالك اليوم؟',
-      'time': '2 د',
-      'avatar': 'https://via.placeholder.com/40',
-      'hasUnread': true,
-    },
-    {
-      'name': 'نور محمد',
-      'message': 'شكرا لك على الوجبة الرائعة',
-      'time': '5 د',
-      'avatar': 'https://via.placeholder.com/40',
-      'hasUnread': false,
-    },
-    {
-      'name': 'سارة الخضير',
-      'message': 'هل يمكنني طلب نفس الوجبة؟',
-      'time': '15 د',
-      'avatar': 'https://via.placeholder.com/40',
-      'hasUnread': true,
-    },
-    {
-      'name': 'فريد الأحمري',
-      'message': 'متى ستكون الوجبة جاهزة؟',
-      'time': '30 د',
-      'avatar': 'https://via.placeholder.com/40',
-      'hasUnread': false,
-    },
-  ];
+  @override
+  Widget build(BuildContext context) {
+    return const ChatListScreenContent();
+  }
+}
+
+class ChatListScreenContent extends StatelessWidget {
+  const ChatListScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -88,38 +65,84 @@ class ChatListScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.all(16),
-              itemCount: _chats.length,
-              itemBuilder: (context, index) {
-                final chat = _chats[index];
-                return _buildChatItem(
-                  context,
-                  chat['name'],
-                  chat['message'],
-                  chat['time'],
-                  chat['avatar'],
-                  hasUnread: chat['hasUnread'],
-                );
-              },
+              children: [
+                _buildChatItem(
+                  'جود أحمد',
+                  'مرحبا كيف حالك اليوم؟',
+                  '2 د',
+                  'https://via.placeholder.com/40',
+                  hasUnread: true,
+                ),
+                _buildChatItem(
+                  'نور محمد',
+                  'شكرا لك على الوجبة الرائعة',
+                  '5 د',
+                  'https://via.placeholder.com/40',
+                ),
+                _buildChatItem(
+                  'سارة الخضير',
+                  'هل يمكنني طلب نفس الوجبة؟',
+                  '15 د',
+                  'https://via.placeholder.com/40',
+                  hasUnread: true,
+                ),
+                _buildChatItem(
+                  'فريد الأحمري',
+                  'متى ستكون الوجبة جاهزة؟',
+                  '30 د',
+                  'https://via.placeholder.com/40',
+                ),
+                _buildChatItem(
+                  'أحمد العريفي',
+                  'الطعام كان لذيذ جداً، شكراً لك',
+                  '1 س',
+                  'https://via.placeholder.com/40',
+                ),
+                _buildChatItem(
+                  'نور الهزاني',
+                  'هل تتوفر وجبات نباتية؟',
+                  '2 س',
+                  'https://via.placeholder.com/40',
+                ),
+                _buildChatItem(
+                  'محمد الشمري',
+                  'أريد أن أشارك وجبة معك',
+                  '3 س',
+                  'https://via.placeholder.com/40',
+                ),
+              ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: const CustomBottomNav(currentIndex: 3),
     );
   }
 
-  Widget _buildChatItem(BuildContext context, String name, String message, String time, String avatar, {bool hasUnread = false}) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => IndividualChatScreen(
+  Widget _buildChatItem(String name, String message, String time, String avatar, {bool hasUnread = false}) {
+    return Builder(
+      builder: (context) => GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => IndividualChatScreen(
               userName: name,
-              userAvatar: NetworkImage(avatar),
+              userAvatar: avatar,
             ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
+
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
           ),
         );
       },
@@ -208,6 +231,6 @@ class ChatListScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+     ) );
   }
-}
+  }

@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:digitopia_app/screens/notifictions_screen.dart';
-import 'package:digitopia_app/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const HomeScreenContent();
+  }
+}
+
+class HomeScreenContent extends StatelessWidget {
+  const HomeScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +174,7 @@ class HomeScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildCategoryButton('مشروبا', false),
+                  _buildCategoryButton('مشروبات', false),
                   _buildCategoryButton('حلويات', false),
                   _buildCategoryButton('وجبات رئيسية', false),
                   _buildCategoryButton('الكل', true),
@@ -173,61 +184,84 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('12 وجبة', style: TextStyle(color: Colors.grey, fontSize: 14)),
-                  Text('وجبات متاحة قريبة منك', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('meals')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            const SizedBox(height: 16),
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(32),
+                    child: Text('لا توجد وجبات متاحة حالياً', 
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
 
-            _buildMealCard(
-              'كبسة دجاج',
-              'تكفي 4 - 5 أشخاص • طازجة',
-              'أم محمد',
-              'منذ 15 دقيقة',
-              4.8,
-              '3ر',
-              'متاح الآن',
-              Colors.green,
-            ),
+                final meals = snapshot.data!.docs;
 
-            _buildMealCard(
-              'بيتزا مارجريتا',
-              'حجم كبير • مكونات طازجة',
-              'أحمد علي',
-              'منذ 30 دقيقة',
-              4.5,
-              '8ر',
-              'محجوز',
-              Colors.orange,
-            ),
-
-            _buildMealCard(
-              'حلويات شرقية متنوعة',
-              'طبق متنوع • بقلاوة ومعمول',
-              'فاطمة أحمد',
-              'منذ ساعة',
-              5.0,
-              '1.2ر',
-              'متاح الآن',
-              Colors.green,
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('${meals.length} وجبة', style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                          const Text('وجبات متاحة قريبة منك', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...meals.map((doc) {
+                      final meal = doc.data() as Map<String, dynamic>;
+                      return _buildMealCard(
+                        meal['name'] ?? 'وجبة',
+                        'تكفي ${meal['quantity']} أشخاص • ${meal['location']}',
+                        'مستخدم',
+                        _getTimeAgo(meal['timestamp']),
+                        5.0,
+                        'مجاني',
+                        'متاح الآن',
+                        Colors.green,
+                        meal['imageUrl'],
+                        doc.id,
+                      );
+                    }).toList(),
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 80),
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNav(currentIndex: 0),
     );
   }
 
-  Widget _buildCategoryButton(String text, bool isSelected) {
+  static String _getTimeAgo(Timestamp? timestamp) {
+    if (timestamp == null) return 'الآن';
+    final now = DateTime.now();
+    final time = timestamp.toDate();
+    final difference = now.difference(time);
+    
+    if (difference.inMinutes < 60) {
+      return 'منذ ${difference.inMinutes} دقيقة';
+    } else if (difference.inHours < 24) {
+      return 'منذ ${difference.inHours} ساعة';
+    } else {
+      return 'منذ ${difference.inDays} يوم';
+    }
+  }
+
+  static Widget _buildCategoryButton(String text, bool isSelected) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -245,7 +279,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMealCard(String title, String description, String chef, String time, double rating, String price, String status, Color statusColor) {
+  static Widget _buildMealCard(String title, String description, String chef, String time, double rating, String price, String status, Color statusColor, String? imageUrl, String docId) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -269,8 +303,13 @@ class HomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                   image: DecorationImage(
-                    image: NetworkImage('https://via.placeholder.com/300x150'),
+                    image: imageUrl != null && imageUrl.isNotEmpty
+                        ? NetworkImage(imageUrl)
+                        : const NetworkImage('https://via.placeholder.com/300x150'),
                     fit: BoxFit.cover,
+                    onError: (exception, stackTrace) {
+                      print('Image load error: $exception');
+                    },
                   ),
                 ),
               ),
@@ -296,6 +335,23 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(price, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 60,
+                child: GestureDetector(
+                  onTap: () async {
+                    await FirebaseFirestore.instance.collection('meals').doc(docId).delete();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.delete, color: Colors.white, size: 16),
+                  ),
                 ),
               ),
             ],

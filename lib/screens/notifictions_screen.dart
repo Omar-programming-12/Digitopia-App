@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_nav.dart';
 
 class NotifictionsScreen extends StatelessWidget {
   const NotifictionsScreen({super.key});
@@ -99,11 +98,6 @@ class NotifictionsScreen extends StatelessWidget {
           ),
         ],
       ),
-
- 
-        // --------------------------------------- Navigation Bar --------------------------------------- //
-
-      bottomNavigationBar: const CustomBottomNav(currentIndex: 0),   
     );
   }
 

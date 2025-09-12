@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:digitopia_app/widgets/custom_bottom_nav.dart';
 
 class IndividualChatScreen extends StatefulWidget {
   final String userName;
-  final ImageProvider userAvatar;
-
+  final String userAvatar;
+  
   const IndividualChatScreen({
     super.key,
     required this.userName,
@@ -16,36 +15,27 @@ class IndividualChatScreen extends StatefulWidget {
 }
 
 class _IndividualChatScreenState extends State<IndividualChatScreen> {
+  final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [
     {
-      'text': 'أهلاً كيف حالك اليوم؟ هل وجدة الكيسة مناحة بعد؟',
-      'time': 'ص 10:00',
+      'text': 'مرحباً! هل الوجبة ما زالت متاحة؟',
       'isMe': false,
+      'time': '14:30',
     },
     {
-      'text': 'آمنة بدنا لا نخير شكراً لسؤالك. نعم الكيسة متاحة',
-      'time': 'ص 10:02',
+      'text': 'نعم، ما زالت متاحة. كم شخص؟',
       'isMe': true,
+      'time': '14:32',
     },
     {
-      'text': 'كم عدد الوجبات المتوفرة؟ وكم تكلف كل شخص؟',
-      'time': 'ص 10:05',
+      'text': 'شخصين فقط، متى يمكنني الاستلام؟',
       'isMe': false,
+      'time': '14:33',
     },
     {
-      'text': 'لدينا 3 وجبات. كل واحدة تكلف 5 ₹ أشخاص',
-      'time': 'ص 10:07',
+      'text': 'يمكنك الاستلام خلال ساعة من الآن',
       'isMe': true,
-    },
-    {
-      'text': 'رائع! هل يمكنني استلامها بعد الساعة 5 مساءً؟',
-      'time': 'ص 10:10',
-      'isMe': false,
-    },
-    {
-      'text': 'نعم هذا مناسب. هل تحتاج إلى المساعدة في إيجاد المكان؟',
-      'time': 'ص 10:12',
-      'isMe': true,
+      'time': '14:35',
     },
   ];
 
@@ -53,73 +43,127 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 50, 16, 20),
-            child: Row(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF6366F1),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundImage: NetworkImage(widget.userAvatar),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.black),
-                ),
-                const SizedBox(width: 8),
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: widget.userAvatar,
-                ),
-                const SizedBox(width: 12),
                 Text(
                   widget.userName,
                   style: const TextStyle(
-                    fontSize: 18,
+                    color: Colors.white,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Text(
+                  'متصل الآن',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.call, color: Colors.white),
+            onPressed: () {},
           ),
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                return _buildMessageBubble(
+                return _buildMessage(
                   message['text'],
-                  message['time'],
                   message['isMe'],
+                  message['time'],
                 );
               },
             ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                ),
+              ],
+            ),
             child: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                IconButton(
+                  icon: const Icon(Icons.attach_file, color: Colors.grey),
+                  onPressed: () {},
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      hintText: 'اكتب رسالة...',
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.send,
-                    color: Colors.white,
-                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'اكتب رسالة...',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF6366F1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.send, color: Colors.white),
+                    onPressed: () {
+                      if (_messageController.text.isNotEmpty) {
+                        setState(() {
+                          _messages.add({
+                            'text': _messageController.text,
+                            'isMe': true,
+                            'time': '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                          });
+                        });
+                        _messageController.clear();
+                      }
+                    },
                   ),
                 ),
               ],
@@ -127,47 +171,66 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: const CustomBottomNav(currentIndex: 3),
     );
   }
 
-  Widget _buildMessageBubble(String text, String time, bool isMe) {
+  Widget _buildMessage(String text, bool isMe, String time) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
+          if (!isMe) ...[
+            CircleAvatar(
+              radius: 16,
+              backgroundImage: NetworkImage(widget.userAvatar),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: isMe
-                  ? const LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                    )
-                  : null,
-              color: isMe ? null : Colors.grey[100],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              text,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black87,
-                fontSize: 14,
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isMe ? const Color(0xFF6366F1) : Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.right,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: isMe ? Colors.white : Colors.black,
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    time,
+                    style: TextStyle(
+                      color: isMe ? Colors.white70 : Colors.grey[600],
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            time,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
+          if (isMe) ...[
+            const SizedBox(width: 8),
+            CircleAvatar(
+              radius: 16,
+              backgroundImage: NetworkImage('https://via.placeholder.com/32'),
             ),
-          ),
+          ],
         ],
       ),
     );
