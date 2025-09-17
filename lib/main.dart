@@ -1,14 +1,16 @@
+import 'package:digitopia_app/services/push_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/main_navigation.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // BackgroundMessageHandler _firebaseMessagingBackgroundHandler;
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+   FirebaseMessaging.onBackgroundMessage(PushNotificationService.firebaseMessagingBackgroundHandler);
+   await PushNotificationService.init();
   
   await Supabase.initialize(
     url: 'https://hzolhiplwpycqldeudgk.supabase.co',
