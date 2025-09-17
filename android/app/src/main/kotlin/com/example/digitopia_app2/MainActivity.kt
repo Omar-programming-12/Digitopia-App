@@ -1,4 +1,4 @@
-package com.example.digitopia_app
+package com.example.digitopia_app2
 
 import io.flutter.embedding.android.FlutterActivity
 
