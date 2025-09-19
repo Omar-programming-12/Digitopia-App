@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "375276199129",
+    "project_id": "food-67516",
+    "storage_bucket": "food-67516.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375276199129:android:28b37252a6cc3887b6b2c8",
+        "android_client_info": {
+          "package_name": "com.example.digitopia_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375276199129-sqdhfvh9ki77k51s18m7r5fss8dsd56k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.digitopia_app",
+            "certificate_hash": "07a494f03161cbb35fd3f3c55037414c7336356b"
+          }
+        },
+        {
+          "client_id": "375276199129-ecu55l2a9ufne417l9egsd2t9vvpi1h8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX4CHRoydzRDzPX6-PS9tdvejjYa1C_sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375276199129-ecu55l2a9ufne417l9egsd2t9vvpi1h8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "375276199129-41763nl94ds37o6g7r4dnat5kvjp7ebl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.digitopiaApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375276199129:android:5dd5b47c950dca1fb6b2c8",
+        "android_client_info": {
+          "package_name": "com.example.digitopia_app2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375276199129-ecu55l2a9ufne417l9egsd2t9vvpi1h8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX4CHRoydzRDzPX6-PS9tdvejjYa1C_sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375276199129-ecu55l2a9ufne417l9egsd2t9vvpi1h8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "375276199129-41763nl94ds37o6g7r4dnat5kvjp7ebl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.digitopiaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
