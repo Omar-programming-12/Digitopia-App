@@ -1,72 +1,75 @@
-import 'package:digitopia_app/constants/app_constants.dart';
+import 'package:digitopia_app/core/di/injection_container.dart' as di;
+import 'package:digitopia_app/presentation/pages/auth_wrapper.dart';
 import 'package:digitopia_app/services/connectivity_service.dart';
 import 'package:digitopia_app/services/push_notification_service.dart';
-import 'package:digitopia_app/services/storage_service.dart';
-import 'package:digitopia_app/utils/app_state.dart';
+import 'package:digitopia_app/utils/app_lifecycle_manager.dart';
+import 'package:digitopia_app/utils/memory_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'screens/main_navigation.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  try {
-    await StorageService.initialize();
-    await ConnectivityService.initialize();
-    
-    await Firebase.initializeApp();
-    printFcmToken();
-    FirebaseMessaging.onBackgroundMessage(PushNotificationService.firebaseMessagingBackgroundHandler);
-    await PushNotificationService.init();
-    
-    await Supabase.initialize(
-      url: AppConstants.supabaseUrl,
-      anonKey: AppConstants.supabaseAnonKey,
-    );
-  } catch (e) {
-    debugPrint('خطأ في التهيئة: $e');
-  }
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: const MyApp(),
-    ),
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(PushNotificationService.firebaseMessagingBackgroundHandler);
+  await PushNotificationService.init();
+  
+  await Supabase.initialize(
+    url: 'https://hzolhiplwpycqldeudgk.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6b2xoaXBsd3B5Y3FsZGV1ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3MDM5MDYsImV4cCI6MjA3MzI3OTkwNn0.BeSadD1DqrSBsJEs6vR_ZbzJJvzAypE6Yk9pTIXnhe4',
   );
+  
+  await ConnectivityService.initialize();
+  await di.init();
+  
+  MemoryManager.limitImageCacheSize();
+  
+  runApp(const DigitopiaApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class DigitopiaApp extends StatefulWidget {
+  const DigitopiaApp({super.key});
+
+  @override
+  State<DigitopiaApp> createState() => _DigitopiaAppState();
+}
+
+class _DigitopiaAppState extends State<DigitopiaApp> {
+  final AppLifecycleManager _lifecycleManager = AppLifecycleManager();
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycleManager.initialize();
+  }
+
+  @override
+  void dispose() {
+    _lifecycleManager.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: AppConstants.appName,
+      title: 'Digitopia',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Cairo',
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppConstants.primaryColor,
-          brightness: Brightness.light,
-        ),
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          centerTitle: true,
-        ),
       ),
       home: ConnectivityService.buildConnectivityWrapper(
-        child: const MainNavigation(),
+        child: const AuthWrapper(),
       ),
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
-
-// FCM token for teest = dvAFgQoaQwq285waRBDa5A:APA91bFZXtkxiJX_VPD5QVN6ASqLncUnzVpagDMAEwwdJjlSi3wA8Z7lsI4WP_Ptz659VDy3ehsJAyXM7OSSxL2RZHzyqSx3sYRArc1c_4xCFlE6YPQA6YE
-

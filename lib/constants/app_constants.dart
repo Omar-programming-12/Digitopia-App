@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
+
   // Colors
   static const Color primaryColor = Color(0xFF6366F1);
   static const Color secondaryColor = Color(0xFF8B5CF6);
@@ -12,7 +13,7 @@ class AppConstants {
   static const Color errorColor = Colors.red;
   static const Color warningColor = Colors.orange;
   
-  // Gradients
+  // Gradient
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryColor, secondaryColor],
     begin: Alignment.centerLeft,
@@ -38,7 +39,7 @@ class AppConstants {
   static const double fontXLarge = 18.0;
   static const double fontXXLarge = 24.0;
   
-  // Animation Durations
+  // animation Durations
   static const Duration animationFast = Duration(milliseconds: 200);
   static const Duration animationMedium = Duration(milliseconds: 300);
   static const Duration animationSlow = Duration(milliseconds: 500);

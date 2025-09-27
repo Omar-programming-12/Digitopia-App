@@ -1,78 +1,95 @@
-# تحسينات التطبيق المطبقة
+# Project Issues and TODO List
 
-## 1. تحسينات الأداء
-- ✅ إضافة lazy loading للقوائم
-- ✅ تحسين تحميل الصور مع error handling
-- ✅ إضافة debouncing للبحث
-- ✅ استخدام IndexedStack لتحسين التنقل
-- ✅ إضافة caching للصور
+## Current Problems
+- ❌ Google signin completely broken
+- ❌ Images not loading properly
+- ❌ No error handling for network issues
+- ❌ Delete button UI bug
+- ❌ Hardcoded values everywhere
 
-## 2. إدارة الحالة
-- ✅ إضافة Provider لإدارة الحالة العامة
-- ✅ إنشاء AppState للبيانات المشتركة
-- ✅ تحسين إدارة البيانات المحلية
+## Things That Need Fixing
+- 🔄 Need to implement proper state management
+- 🔄 Add input validation
+- 🔄 Fix memory leaks
+- 🔄 Better error messages for users
 
-## 3. إدارة الأخطاء
-- ✅ إضافة error handling شامل
-- ✅ إنشاء ErrorHandler للأخطاء المختلفة
-- ✅ تحسين رسائل الخطأ والتحميل
+## Attempted Fixes (Failed)
+- ❌ Tried to fix google signin - made it worse
+- ❌ Attempted image caching - app became slower
+- ❌ Added validation - broke the form
+- ❌ Tried to optimize - introduced new bugs
 
-## 4. الاتصال والشبكة
-- ✅ إضافة ConnectivityService لمراقبة الاتصال
-- ✅ تحسين معالجة انقطاع الإنترنت
-- ✅ إضافة retry mechanisms
+## Quick Hacks (Temporary Solutions)
+- 🚑 Using print() instead of proper logging
+- 🚑 Hardcoded user names
+- 🚑 No proper navigation
+- 🚑 Basic error handling with try-catch
 
-## 5. التخزين المحلي
-- ✅ إنشاء StorageService للتخزين المحلي
-- ✅ إضافة SharedPreferences للإعدادات
-- ✅ تحسين إدارة البيانات المؤقتة
+## TODO (When I Have Time)
+- [ ] Fix google signin properly
+- [ ] Add proper image loading
+- [ ] Implement real navigation
+- [ ] Add user authentication
+- [ ] Fix all the hardcoded values
+- [ ] Add proper error handling
+- [ ] Test on different devices
 
-## 6. تحسينات UI/UX
-- ✅ إنشاء AppConstants للألوان والقيم الثابتة
-- ✅ تحسين التصميم والألوان
-- ✅ إضافة animations محسنة
-- ✅ تحسين SearchTextField مع debouncing
+## Known Bugs (Don't Tell Anyone)
+1. App crashes when no internet
+2. Images sometimes don't load
+3. Delete button doesn't refresh UI
+4. Google signin is completely broken
+5. No input validation anywhere
+6. Memory leaks in some screens
+7. Hardcoded Arabic text mixed with English
+8. No proper error messages for users
 
-## 7. تحسينات الكود
-- ✅ إعادة تنظيم بنية المشروع
-- ✅ إضافة utils functions
-- ✅ تحسين MealService مع error handling
-- ✅ إضافة const للويدجت الثابتة
+## Code Quality Issues
+- Mixed languages in comments
+- Inconsistent naming conventions
+- No documentation
+- Copy-pasted code everywhere
+- TODO comments that will never be done
+- Quick fixes that broke other things
 
-## 8. Dependencies الجديدة
-- ✅ cached_network_image: لتحسين تحميل الصور
-- ✅ provider: لإدارة الحالة
-- ✅ shared_preferences: للتخزين المحلي
-- ✅ connectivity_plus: لمراقبة الاتصال
+## Dependencies That Don't Work
+- google_sign_in: configured wrong
+- cached_network_image: causing crashes
+- firebase_auth: works sometimes
+- cloud_firestore: slow queries
 
-## 9. تحسينات الأمان
-- ✅ إضافة validation للبيانات
-- ✅ تحسين error handling للـ Firebase
-- ✅ إضافة timeout للعمليات
+## Security Issues (Oops)
+- No input validation
+- Hardcoded API keys (removed from git)
+- No proper authentication flow
+- User data not encrypted
 
-## 10. تحسينات إضافية مقترحة
-- 🔄 إضافة offline caching
-- 🔄 تحسين البحث بالـ Algolia
-- 🔄 إضافة push notifications محسنة
-- 🔄 إضافة analytics
-- 🔄 تحسين الصور بـ image compression
+## Maybe Later (Probably Never)
+- Proper testing
+- Code documentation
+- Performance optimization
+- Accessibility features
+- Internationalization
+- Proper CI/CD
 
-## الملفات المضافة/المحدثة:
-1. `lib/constants/app_constants.dart` - الثوابت والألوان
-2. `lib/utils/app_utils.dart` - الدوال المساعدة
-3. `lib/utils/app_state.dart` - إدارة الحالة
-4. `lib/utils/error_handler.dart` - إدارة الأخطاء
-5. `lib/utils/performance_optimizer.dart` - تحسين الأداء
-6. `lib/services/connectivity_service.dart` - إدارة الاتصال
-7. `lib/services/storage_service.dart` - التخزين المحلي
-8. `lib/widgets/optimized_image.dart` - ويدجت الصور المحسن
-9. تحديث `main.dart` - تهيئة الخدمات الجديدة
-10. تحديث `home_screen.dart` - استخدام التحسينات
-11. تحديث `food_card.dart` - تحسين الأداء
-12. تحديث `search_text_field.dart` - إضافة debouncing
-13. تحديث `meal_service.dart` - error handling
-14. تحديث `search_system_service.dart` - تحسين البحث
-15. تحديث `main_navigation.dart` - تحسين التنقل
-16. تحديث `pubspec.yaml` - إضافة dependencies
+## Files That Are Broken
+1. `login_screen.dart` - simplified but still buggy
+2. `food_card.dart` - basic version, delete button broken
+3. `bugs.dart` - list of all known issues
+4. Most other files - probably have issues too
 
-هذه التحسينات ستجعل التطبيق أسرع وأكثر استقراراً وأفضل في تجربة المستخدم.
+## Files That Work (Sort Of)
+1. `main.dart` - starts the app
+2. `home_screen.dart` - shows meals sometimes
+3. `share_meal_screen.dart` - uploads work occasionally
+
+## Files I'm Afraid to Touch
+- Anything with Firebase configuration
+- The Django backend (it's working, don't break it)
+- Navigation files (too complex)
+
+Note: This is a work in progress. Many features are broken or incomplete. Use at your own risk.
+
+Last updated: When I gave up trying to fix the Google signin issue.
+
+Status: It compiles and runs, that's something I guess.
