@@ -1,15 +1,11 @@
 import 'package:digitopia_app/presentation/pages/about_app_screen.dart';
-import 'package:digitopia_app/presentation/pages/favorites_screen.dart';
 import 'package:digitopia_app/presentation/pages/help_support_screen.dart';
 import 'package:digitopia_app/presentation/pages/home_screen.dart';
-import 'package:digitopia_app/presentation/pages/language_screen.dart';
 import 'package:digitopia_app/presentation/pages/login_screen.dart';
-import 'package:digitopia_app/presentation/pages/notification_settings_screen.dart';
-import 'package:digitopia_app/presentation/pages/order_history_screen.dart';
 import 'package:digitopia_app/presentation/pages/personal_info_screen.dart';
 import 'package:digitopia_app/presentation/pages/privacy_security_screen.dart';
-import 'package:digitopia_app/presentation/pages/ratings_screen.dart';
 import 'package:digitopia_app/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -17,15 +13,37 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ProfileScreenContent();
+    return ProfileScreenContent();
   }
 }
 
-class ProfileScreenContent extends StatelessWidget {
-  const ProfileScreenContent({super.key});
+class ProfileScreenContent extends StatefulWidget {
+  @override
+  State<ProfileScreenContent> createState() => _ProfileScreenContentState();
+}
+
+class _ProfileScreenContentState extends State<ProfileScreenContent> {
+  String? _displayName;
+  String? _email;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    _displayName = user?.displayName ?? 'اسم المستخدم';
+    _email = user?.email ?? 'البريد الإلكتروني';
+  }
+
+  void _updateProfile(String displayName, String email) {
+    setState(() {
+      _displayName = displayName;
+      _email = email;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -35,14 +53,8 @@ class ProfileScreenContent extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.push(context , MaterialPageRoute(builder: (context) => HomeScreen())),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -57,17 +69,14 @@ class ProfileScreenContent extends StatelessWidget {
                     backgroundImage: NetworkImage('https://via.placeholder.com/100'),
                   ),
                   const SizedBox(height: 16),
-                  const Text('سارة أحمد', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(
+                    _displayName!,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
-                  Text('sarah.ahmed@email.com', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.location_on, color: Colors.blue, size: 16),
-                      const SizedBox(width: 4),
-                      Text('الرياض، السعودية', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                    ],
+                  Text(
+                    _email!,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                 ],
               ),
@@ -88,13 +97,19 @@ class ProfileScreenContent extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildProfileItem(Icons.person, 'المعلومات الشخصية', '', () => _navigateToScreen(context, const PersonalInfoScreen())),
-                  _buildDivider(),
-                  _buildProfileItem(Icons.favorite, 'المفضلة', '12 وجبة', () => _navigateToScreen(context, const FavoritesScreen())),
-                  _buildDivider(),
-                  _buildProfileItem(Icons.history, 'سجل الطلبات', '25 طلب', () => _navigateToScreen(context, const OrderHistoryScreen())),
-                  _buildDivider(),
-                  _buildProfileItem(Icons.star, 'التقييمات', '4.8', () => _navigateToScreen(context, const RatingsScreen())),
+                  _buildProfileItem(Icons.person, 'المعلومات الشخصية', '', () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PersonalInfoScreen(
+                 
+                        ),
+                      ),
+                    );
+                    if (result != null && result is Map<String, String>) {
+                      _updateProfile(result['displayName']!, result['email']!);
+                    }
+                  }),
                 ],
               ),
             ),
@@ -114,11 +129,7 @@ class ProfileScreenContent extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildProfileItem(Icons.notifications, 'الإشعارات', '', () => _navigateToScreen(context, const NotificationSettingsScreen())),
-                  _buildDivider(),
                   _buildProfileItem(Icons.security, 'الخصوصية والأمان', '', () => _navigateToScreen(context, const PrivacySecurityScreen())),
-                  _buildDivider(),
-                  _buildProfileItem(Icons.language, 'اللغة', 'العربية', () => _navigateToScreen(context, const LanguageScreen())),
                   _buildDivider(),
                   _buildProfileItem(Icons.help, 'المساعدة والدعم', '', () => _navigateToScreen(context, const HelpSupportScreen())),
                 ],
@@ -175,13 +186,6 @@ class ProfileScreenContent extends StatelessWidget {
           color: isLogout ? Colors.red : Colors.black,
         ),
       ),
-      subtitle: subtitle.isNotEmpty ? Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey[600],
-        ),
-      ) : null,
       trailing: Icon(
         Icons.arrow_forward_ios,
         size: 16,

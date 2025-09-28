@@ -5,6 +5,7 @@ import 'package:digitopia_app/presentation/widgets/food_card.dart';
 import 'package:digitopia_app/presentation/widgets/search_text_field.dart';
 import 'package:digitopia_app/services/search_system_service.dart';
 import 'package:digitopia_app/utils/app_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -43,6 +44,7 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
+  final user = FirebaseAuth.instance.currentUser;
   String searchQuery = "";
   final TextEditingController searchController = TextEditingController();
 
@@ -95,10 +97,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   ],
                 ),
                 const Spacer(),
-                const Column(
+                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('مرحباً سارة',
+                    Text(
+                        user?.displayName ?? 'اسم المستخدم',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

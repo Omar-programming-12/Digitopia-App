@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import FCMToken, NotificationLog
 from .serializers import FCMTokenSerializer, NotificationSerializer, CustomNotificationSerializer
-from .services import NotificationService
+from .services import NotificationService as FCMService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ class MealNotificationView(APIView):
                 'type': 'new_meal'
             }
             
-            result = NotificationService.send_to_multiple(
+            result = FCMService.send_notification(
                 tokens=list(active_tokens),
                 title=data['title'],
                 body=data['body'],
@@ -67,14 +67,14 @@ class MealNotificationView(APIView):
                 body=data['body'],
                 data=notification_data,
                 sent_to_count=len(active_tokens),
-                success_count=result
+                success_count=result.get('success', 0)
             )
             
             return Response({
                 'message': 'تم إرسال الإشعار بنجاح',
                 'sent_to': len(active_tokens),
-                'success_count': result,
-                'failure_count': len(active_tokens) - result
+                'success_count': result.get('success', 0),
+                'failure_count': result.get('failure', 0)
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -92,7 +92,7 @@ class CustomNotificationView(APIView):
                     'message': 'لا توجد أجهزة مسجلة'
                 }, status=status.HTTP_200_OK)
             
-            result = NotificationService.send_to_multiple(
+            result = FCMService.send_notification(
                 tokens=list(active_tokens),
                 title=data['title'],
                 body=data['body'],
@@ -105,14 +105,12 @@ class CustomNotificationView(APIView):
                 body=data['body'],
                 data=data.get('data'),
                 sent_to_count=len(active_tokens),
-                success_count=result
+                success_count=result.get('success', 0)
             )
             
             return Response({
                 'message': 'تم إرسال الإشعار المخصص بنجاح',
-                'sent_to': len(active_tokens),
-                'success_count': result,
-                'failure_count': len(active_tokens) - result
+                'result': result
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
