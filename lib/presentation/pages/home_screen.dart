@@ -66,36 +66,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.menu, color: Colors.white, size: 24),
-                const SizedBox(width: 16),
-                Stack(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const NotifictionsScreen()),
-                        );
-                      },
-                      icon:
-                          const Icon(Icons.notifications, color: Colors.white, size: 24),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Text('3',
-                            style: TextStyle(color: Colors.white, fontSize: 10)),
-                      ),
-                    ),
-                  ],
-                ),
                 const Spacer(),
                  Column(
                   crossAxisAlignment: CrossAxisAlignment.end,

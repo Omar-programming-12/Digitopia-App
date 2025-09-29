@@ -101,8 +101,9 @@ class _ProfileScreenContentState extends State<ProfileScreenContent> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PersonalInfoScreen(
-                 
+                        builder: (context) => PersonalInfoScreen(    
+                          currentName: _displayName!,
+                          currentEmail: _email!,
                         ),
                       ),
                     );
