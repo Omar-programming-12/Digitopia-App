@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitopia_app/presentation/pages/notifictions_screen.dart';
-import 'package:digitopia_app/presentation/pages/share_meal_screen.dart';
+import 'package:digitopia_app/presentation/pages/main_navigation.dart';
 import 'package:digitopia_app/presentation/widgets/food_card.dart';
 import 'package:digitopia_app/presentation/widgets/search_text_field.dart';
 import 'package:digitopia_app/services/search_system_service.dart';
@@ -76,15 +75,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold)),
-                    Text('الرياض - الدخل',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                  
                   ],
                 ),
                 const SizedBox(width: 12),
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.white24,
-                  child: Icon(Icons.person, color: Colors.white),
+                  child: Text(
+                    user?.displayName?.isNotEmpty == true 
+                        ? user!.displayName![0].toUpperCase() 
+                        : 'U',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
@@ -148,6 +151,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               statusColor: Colors.green,
                               imageUrl: data['imageUrl'],
                               docId: filteredMeals[index].id,
+                              mealOwnerId: data['userId'],
                             );
                           });
                       },
@@ -161,14 +165,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.location_on, color: Colors.blue, size: 20),
-                        Text('تغيير الموقع', style: TextStyle(color: Colors.blue, fontSize: 14)),
-                        Spacer(),
-                        Text('ضمن 5 كم',
-                            style:
-                                TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                      ],
+                      
                     ),
                   ),
 
@@ -179,50 +176,61 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue, width: 1),
-                            ),
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.map, color: Colors.blue, size: 32),
-                                SizedBox(height: 8),
-                                Text('الخريطة', style: TextStyle(color: Colors.blue, fontSize: 14)),
-                              ],
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MainNavigation(initialIndex: 1),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.blue, width: 1),
+                              ),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.restaurant_menu, color: Colors.blue, size: 32),
+                                  SizedBox(height: 8),
+                                  Text('وجباتي', style: TextStyle(color: Colors.blue, fontSize: 14)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.add, color: Colors.white, size: 32),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const ShareMealScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('شارك وجبة',
-                                      style: TextStyle(color: Colors.white, fontSize: 14)),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MainNavigation(initialIndex: 2),
                                 ),
-                              ],
+                              );
+                            },
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add, color: Colors.white, size: 32),
+                                  SizedBox(height: 8),
+                                  Text('شارك وجبة',
+                                      style: TextStyle(color: Colors.white, fontSize: 14)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -232,32 +240,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
                   const SizedBox(height: 20),
 
-                  // categories
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('التصنيفات',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
 
-                  const SizedBox(height: 12),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        HomeScreenContent._buildCategoryButton('مشروبات', false),
-                        HomeScreenContent._buildCategoryButton('حلويات', false),
-                        HomeScreenContent._buildCategoryButton('وجبات رئيسية', false),
-                        HomeScreenContent._buildCategoryButton('الكل', true),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
 
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -310,6 +293,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               statusColor: Colors.green,
                               imageUrl: meal['imageUrl'],
                               docId: doc.id,
+                              mealOwnerId: meal['userId'],
                             );
                           }).toList(),
                         ],
